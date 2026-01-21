@@ -66,8 +66,8 @@
 </head>
 <body class="bg-slate-950 text-slate-200 font-sans min-h-screen flex flex-col">
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-4 right-4 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg transform transition-all duration-300 translate-y-20 opacity-0 z-50 flex items-center gap-2">
+    <!-- Toast Notification (Z-index increased to 100 to appear above modals) -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg transform transition-all duration-300 translate-y-20 opacity-0 z-[100] flex items-center gap-2">
         <i data-lucide="check-circle" class="w-4 h-4"></i>
         <span>Link copied to clipboard!</span>
     </div>
@@ -182,53 +182,64 @@
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             <div class="inline-block align-bottom bg-slate-900 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-700">
                 <div class="bg-slate-900 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                        <div id="modalIconContainer" class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-slate-800 sm:mx-0 sm:h-10 sm:w-10 text-emerald-400">
-                            <!-- Icon injected here -->
-                        </div>
-                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="text-2xl leading-6 font-bold text-white" id="modalTitle">Shoe Name</h3>
-                                    <p class="text-sm text-emerald-400 font-semibold mt-1" id="modalSubtitle">Brand • Type</p>
+                    <!-- New Modal Layout: Header and Image separate -->
+                    <div class="w-full">
+                        <div class="flex justify-between items-start gap-4">
+                            <div class="flex-grow">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h3 class="text-2xl leading-6 font-bold text-white" id="modalTitle">Shoe Name</h3>
+                                        <p class="text-sm text-emerald-400 font-semibold mt-1" id="modalSubtitle">Brand • Type</p>
+                                    </div>
+                                    <button onclick="shareShoe()" class="text-slate-400 hover:text-white transition p-1 ml-2" title="Share this review">
+                                        <i data-lucide="share-2" class="w-5 h-5"></i>
+                                    </button>
                                 </div>
-                                <button onclick="shareShoe()" class="text-slate-400 hover:text-white transition p-1" title="Share this review">
-                                    <i data-lucide="share-2" class="w-5 h-5"></i>
-                                </button>
+                                <div class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-700 text-slate-200" id="modalTierBadge">
+                                    Tier S
+                                </div>
                             </div>
                             
-                            <div class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-700 text-slate-200" id="modalTierBadge">
-                                Tier S
+                            <!-- Image moved to right side -->
+                            <div id="modalIconContainer" class="flex-shrink-0 h-24 w-24 rounded-lg bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-700">
+                                <!-- Icon/Image injected here -->
                             </div>
+                        </div>
 
-                            <div class="mt-4 border-t border-slate-700 pt-4">
-                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wide">The Verdict</h4>
-                                <p class="text-sm text-slate-300 mt-2 leading-relaxed" id="modalContent">
-                                    Review content goes here...
-                                </p>
+                        <div class="mt-4 border-t border-slate-700 pt-4">
+                            <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wide">The Verdict</h4>
+                            <p class="text-sm text-slate-300 mt-2 leading-relaxed" id="modalContent">
+                                Review content goes here...
+                            </p>
+                        </div>
+
+                        <!-- Specs Grid -->
+                        <div class="mt-4 grid grid-cols-2 gap-2 text-center">
+                            <div class="bg-slate-800 p-2 rounded border border-slate-700">
+                                <span class="block text-xs text-slate-400 uppercase">Weight</span>
+                                <span class="block text-sm font-bold text-slate-200" id="modalWeight"></span>
                             </div>
-
-                            <!-- Specs Grid -->
-                            <div class="mt-4 grid grid-cols-2 gap-2 text-center">
-                                <div class="bg-slate-800 p-2 rounded border border-slate-700">
-                                    <span class="block text-xs text-slate-400 uppercase">Weight</span>
-                                    <span class="block text-sm font-bold text-slate-200" id="modalWeight"></span>
-                                </div>
-                                <div class="bg-slate-800 p-2 rounded border border-slate-700">
-                                    <span class="block text-xs text-slate-400 uppercase">Drop</span>
-                                    <span class="block text-sm font-bold text-slate-200" id="modalDrop"></span>
-                                </div>
+                            <div class="bg-slate-800 p-2 rounded border border-slate-700">
+                                <span class="block text-xs text-slate-400 uppercase">Drop</span>
+                                <span class="block text-sm font-bold text-slate-200" id="modalDrop"></span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="bg-slate-800 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-slate-700">
+                
+                <!-- Footer with Affiliate Message -->
+                <div class="bg-slate-800 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse sm:items-center border-t border-slate-700">
                     <button type="button" class="w-full inline-flex justify-center rounded-md border border-slate-600 shadow-sm px-4 py-2 bg-slate-700 text-base font-medium text-slate-200 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal()">
                         Close
                     </button>
                     <a href="#" id="modalBuyLink" target="_blank" class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-600 shadow-sm px-4 py-2 bg-slate-200 text-base font-medium text-slate-900 hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                         Buy Now
                     </a>
+                    
+                    <!-- Affiliate Message Container -->
+                    <span id="modalAffiliateMessage" class="hidden mt-3 sm:mt-0 text-xs text-slate-400 italic text-center sm:text-right w-full sm:w-auto sm:mr-4">
+                        <!-- Message Injected Here -->
+                    </span>
                 </div>
             </div>
         </div>
@@ -272,31 +283,21 @@
                 const rowsData = [];
                 
                 // Extract Headers
-                // Try to find headers in the 'cols' definition first
                 let headers = json.table.cols.map(c => c.label).filter(l => l !== '');
                 
-                // If cols have no labels (common in some exports), headers might be in the first row of data
                 if (headers.length === 0 && json.table.rows.length > 0) {
                      headers = json.table.rows[0].c.map(cell => cell ? (cell.v || '') : '');
-                     // If we took headers from row 0, we should skip row 0 in the data loop below, 
-                     // BUT to be safe, let's just create a raw 2D array and pass it to our robust transformer
                 }
 
-                // Convert Google's complex JSON to a simple 2D Array
-                // Row 0 will be headers, Row 1+ will be data
-                // We construct a "Raw" 2D array to simulate a CSV read
                 const rawData = [];
                 
-                // Add headers if they were found in 'cols'
                 const colsHeaders = json.table.cols.map(c => c.label || '');
-                // Check if 'cols' actually has useful headers (not just empty strings or generated ids)
                 const hasColHeaders = colsHeaders.some(h => h.length > 0);
                 
                 if (hasColHeaders) {
                     rawData.push(colsHeaders);
                 }
 
-                // Add all rows
                 json.table.rows.forEach(r => {
                     const rowVal = r.c.map(cell => cell ? (cell.v !== null ? cell.v : '') : '');
                     rawData.push(rowVal);
@@ -341,7 +342,7 @@
             
             const getIndex = (keywords) => headers.findIndex(h => keywords.some(k => h.includes(k)));
 
-            // Columns matching your specific request
+            // Columns matching your specific request, including new Affiliate fields
             const idx = {
                 name: getIndex(['shoe name']),
                 brand: getIndex(['shoe brand']),
@@ -351,7 +352,9 @@
                 tier: getIndex(['tier']),
                 link: getIndex(['buy now link']),
                 image: getIndex(['shoe image', 'image']),
-                desc: getIndex(['review', 'description'])
+                desc: getIndex(['review', 'description']),
+                affiliateLink: getIndex(['affiliate link']),
+                affiliateMsg: getIndex(['affiliate message'])
             };
 
             // Map rows to objects
@@ -376,7 +379,9 @@
                     drop: getVal(idx.drop) || "N/A",
                     desc: getVal(idx.desc) || "No review available.",
                     link: getVal(idx.link) || "#",
-                    image: getVal(idx.image) || ""
+                    image: getVal(idx.image) || "",
+                    affiliateLink: getVal(idx.affiliateLink) || "n",
+                    affiliateMsg: getVal(idx.affiliateMsg) || ""
                 };
             });
         }
@@ -505,17 +510,15 @@
             const tierObj = tiers.find(t => t.id === shoe.tier) || { class: 'bg-tier-unknown', desc: 'Unknown' };
             const badge = document.getElementById('modalTierBadge');
             badge.textContent = `Tier ${shoe.tier} - ${tierObj.desc.split('-')[0]}`;
-            // For modal badge in dark mode, we might want to keep the colored bg but ensure text is readable.
-            // Or use a muted version. For now, using the colored class is fine as text contrast is hardcoded in CSS.
             badge.className = `mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${tierObj.class}`;
             
             const iconName = getIconForType(shoe.type);
             const iconContainer = document.getElementById('modalIconContainer');
             
             if (shoe.image && shoe.image.startsWith('http')) {
-                 iconContainer.innerHTML = `<img src="${shoe.image}" alt="${shoe.name}" class="h-full w-full rounded-full object-cover">`;
+                 iconContainer.innerHTML = `<img src="${shoe.image}" alt="${shoe.name}" class="h-full w-full rounded-lg object-cover">`;
             } else {
-                 iconContainer.innerHTML = `<i data-lucide="${iconName}" class="h-6 w-6 text-emerald-400"></i>`;
+                 iconContainer.innerHTML = `<i data-lucide="${iconName}" class="h-10 w-10 text-emerald-400"></i>`;
             }
             
             const buyBtn = document.getElementById('modalBuyLink');
@@ -527,6 +530,15 @@
                 buyBtn.href = '#';
                 buyBtn.classList.add('opacity-50', 'pointer-events-none');
                 buyBtn.textContent = 'No Link Available';
+            }
+
+            // Affiliate Logic
+            const affiliateMsgEl = document.getElementById('modalAffiliateMessage');
+            if (shoe.affiliateLink && shoe.affiliateLink.toLowerCase() === 'y' && shoe.affiliateMsg) {
+                affiliateMsgEl.textContent = shoe.affiliateMsg;
+                affiliateMsgEl.classList.remove('hidden');
+            } else {
+                affiliateMsgEl.classList.add('hidden');
             }
 
             lucide.createIcons();
