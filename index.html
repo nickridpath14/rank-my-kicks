@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rank My Kicks - Running Shoe Tier List</title>
-    <!-- Tailwind CSS (Using CDN for prototyping - ignore console warnings about production) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS with Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Marked.js for Markdown Rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         .tier-row::-webkit-scrollbar {
             height: 8px;
@@ -209,9 +211,9 @@
                         <div class="mt-4 border-t border-slate-700 pt-4">
                             <!-- Dynamic Review Title -->
                             <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wide" id="modalReviewTitleHeader">The Verdict</h4>
-                            <p class="text-sm text-slate-300 mt-2 leading-relaxed" id="modalContent">
+                            <div class="text-sm text-slate-300 mt-2 leading-relaxed prose prose-invert prose-sm max-w-none" id="modalContent">
                                 Review content goes here...
-                            </p>
+                            </div>
                         </div>
 
                         <!-- Specs Grid -->
@@ -341,7 +343,10 @@
             // Identify header indices (flexible matching)
             const headers = rows[0].map(h => String(h).toLowerCase());
             
-            const getIndex = (keywords) => headers.findIndex(h => keywords.some(k => h.includes(k)));
+            // Modified getIndex to accept exclusion
+            const getIndex = (keywords, exclude) => headers.findIndex(h => 
+                keywords.some(k => h.includes(k)) && (!exclude || !h.includes(exclude))
+            );
 
             // Columns matching your specific request, including new Affiliate fields
             const idx = {
@@ -353,7 +358,7 @@
                 tier: getIndex(['tier']),
                 link: getIndex(['buy now link']),
                 image: getIndex(['shoe image', 'image']),
-                desc: getIndex(['review', 'description']),
+                desc: getIndex(['review', 'description'], 'title'), // Exclude 'title' to avoid 'Review Title'
                 affiliateLink: getIndex(['affiliate?', 'affiliate link']), // Updated to match "Affiliate?"
                 affiliateMsg: getIndex(['affiliate message']),
                 reviewTitle: getIndex(['review title']) // Added new column
@@ -506,7 +511,10 @@
 
             document.getElementById('modalTitle').textContent = shoe.name;
             document.getElementById('modalSubtitle').textContent = `${shoe.brand} • ${shoe.type}`;
-            document.getElementById('modalContent').textContent = shoe.desc;
+            
+            // Use Marked.js to parse the description
+            document.getElementById('modalContent').innerHTML = marked.parse(shoe.desc);
+            
             document.getElementById('modalWeight').textContent = shoe.weight;
             document.getElementById('modalDrop').textContent = shoe.drop;
             
