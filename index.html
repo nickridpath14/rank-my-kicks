@@ -207,7 +207,8 @@
                         </div>
 
                         <div class="mt-4 border-t border-slate-700 pt-4">
-                            <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wide">The Verdict</h4>
+                            <!-- Dynamic Review Title -->
+                            <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wide" id="modalReviewTitleHeader">The Verdict</h4>
                             <p class="text-sm text-slate-300 mt-2 leading-relaxed" id="modalContent">
                                 Review content goes here...
                             </p>
@@ -353,8 +354,9 @@
                 link: getIndex(['buy now link']),
                 image: getIndex(['shoe image', 'image']),
                 desc: getIndex(['review', 'description']),
-                affiliateLink: getIndex(['affiliate link']),
-                affiliateMsg: getIndex(['affiliate message'])
+                affiliateLink: getIndex(['affiliate?', 'affiliate link']), // Updated to match "Affiliate?"
+                affiliateMsg: getIndex(['affiliate message']),
+                reviewTitle: getIndex(['review title']) // Added new column
             };
 
             // Map rows to objects
@@ -381,7 +383,8 @@
                     link: getVal(idx.link) || "#",
                     image: getVal(idx.image) || "",
                     affiliateLink: getVal(idx.affiliateLink) || "n",
-                    affiliateMsg: getVal(idx.affiliateMsg) || ""
+                    affiliateMsg: getVal(idx.affiliateMsg) || "",
+                    reviewTitle: getVal(idx.reviewTitle) || "The Verdict"
                 };
             });
         }
@@ -507,6 +510,9 @@
             document.getElementById('modalWeight').textContent = shoe.weight;
             document.getElementById('modalDrop').textContent = shoe.drop;
             
+            // Set dynamic review title
+            document.getElementById('modalReviewTitleHeader').textContent = shoe.reviewTitle;
+            
             const tierObj = tiers.find(t => t.id === shoe.tier) || { class: 'bg-tier-unknown', desc: 'Unknown' };
             const badge = document.getElementById('modalTierBadge');
             badge.textContent = `Tier ${shoe.tier} - ${tierObj.desc.split('-')[0]}`;
@@ -534,7 +540,7 @@
 
             // Affiliate Logic
             const affiliateMsgEl = document.getElementById('modalAffiliateMessage');
-            if (shoe.affiliateLink && shoe.affiliateLink.toLowerCase() === 'y' && shoe.affiliateMsg) {
+            if (shoe.affiliateLink && shoe.affiliateLink.toLowerCase().startsWith('y') && shoe.affiliateMsg) {
                 affiliateMsgEl.textContent = shoe.affiliateMsg;
                 affiliateMsgEl.classList.remove('hidden');
             } else {
