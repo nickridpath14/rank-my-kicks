@@ -25,14 +25,14 @@
             background: rgba(255,255,255,0.2);
         }
 
-        /* Tier Label Colors - kept the same for contrast, but text color might need ensuring */
+        /* Tier Label Colors */
         .bg-tier-s { background-color: #ff7f7f; color: #4a0000; }
         .bg-tier-a { background-color: #ffbf7f; color: #5c2b00; }
         .bg-tier-b { background-color: #ffdf7f; color: #5c4d00; }
         .bg-tier-c { background-color: #ffff7f; color: #4d4d00; }
         .bg-tier-d { background-color: #bfff7f; color: #1a4d00; }
         .bg-tier-f { background-color: #ff7fff; color: #4d004d; }
-        .bg-tier-unknown { background-color: #334155; color: #94a3b8; } /* Darker slate for unknown in dark mode */
+        .bg-tier-unknown { background-color: #334155; color: #94a3b8; }
 
         .card-shadow {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
@@ -68,7 +68,7 @@
 </head>
 <body class="bg-slate-950 text-slate-200 font-sans min-h-screen flex flex-col">
 
-    <!-- Toast Notification (Z-index increased to 100 to appear above modals) -->
+    <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-4 right-4 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg transform transition-all duration-300 translate-y-20 opacity-0 z-[100] flex items-center gap-2">
         <i data-lucide="check-circle" class="w-4 h-4"></i>
         <span>Link copied to clipboard!</span>
@@ -83,11 +83,29 @@
                     <i data-lucide="footprints" class="text-emerald-400 h-8 w-8"></i>
                     <span class="font-bold text-xl tracking-tight">Rank My Kicks</span>
                 </a>
+                
+                <!-- Desktop Menu -->
                 <div class="hidden md:block">
                     <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-800">Home</a>
                     <a href="#" onclick="openAboutModal()" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-800">About</a>
                     <a href="mailto:nick@ridpath.com" class="px-3 py-2 rounded-md text-sm font-medium bg-emerald-600 hover:bg-emerald-700 transition">Contact</a>
                 </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobileMenuBtn" class="p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none">
+                        <i data-lucide="menu" class="h-6 w-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden bg-slate-900 border-t border-slate-800">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); toggleMobileMenu(); return false;" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-800">Home</a>
+                <a href="#" onclick="openAboutModal(); toggleMobileMenu();" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-800">About</a>
+                <a href="mailto:nick@ridpath.com" class="block px-3 py-2 rounded-md text-base font-medium text-emerald-400 hover:bg-slate-800">Contact</a>
             </div>
         </div>
     </nav>
@@ -95,8 +113,8 @@
     <!-- Header & Search -->
     <header class="bg-slate-900 border-b border-slate-800 py-8 px-4">
         <div class="max-w-4xl mx-auto text-center space-y-4">
-            <h1 class="text-3xl md:text-5xl font-extrabold text-white">The Ultimate Running Shoe Tier List</h1>
-            <p class="text-lg text-slate-400">Ranking the best daily trainers, racers, and trail shoes based on pure performance.</p>
+            <h1 class="text-3xl md:text-5xl font-extrabold text-white leading-tight">The Ultimate Running Shoe Tier List</h1>
+            <p class="text-base md:text-lg text-slate-400 px-2">Ranking the best daily trainers, racers, and trail shoes based on pure performance.</p>
             
             <div class="relative max-w-lg mx-auto mt-6">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -105,8 +123,8 @@
                 <input 
                     type="text" 
                     id="searchInput" 
-                    class="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-full leading-5 bg-slate-800 text-white placeholder-slate-500 focus:outline-none focus:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition sm:text-sm shadow-sm"
-                    placeholder="Search shoes by name, brand, or type (e.g. 'Carbon', 'Nike')..."
+                    class="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-full leading-5 bg-slate-800 text-white placeholder-slate-500 focus:outline-none focus:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition text-sm shadow-sm"
+                    placeholder="Search shoes by name, brand..."
                     disabled
                 >
             </div>
@@ -115,7 +133,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow p-4 md:p-8 overflow-x-hidden">
+    <main class="flex-grow p-2 md:p-8 overflow-x-hidden">
         
         <!-- Loading State -->
         <div id="loadingState" class="flex flex-col items-center justify-center py-12">
@@ -186,14 +204,14 @@
                 <div class="bg-slate-900 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <!-- New Modal Layout: Header and Image separate -->
                     <div class="w-full">
-                        <div class="flex justify-between items-start gap-4">
-                            <div class="flex-grow">
+                        <div class="flex flex-col-reverse sm:flex-row justify-between items-start gap-4">
+                            <div class="flex-grow w-full">
                                 <div class="flex items-start justify-between">
                                     <div>
-                                        <h3 class="text-2xl leading-6 font-bold text-white" id="modalTitle">Shoe Name</h3>
+                                        <h3 class="text-xl sm:text-2xl leading-6 font-bold text-white pr-2" id="modalTitle">Shoe Name</h3>
                                         <p class="text-sm text-emerald-400 font-semibold mt-1" id="modalSubtitle">Brand • Type</p>
                                     </div>
-                                    <button onclick="shareShoe()" class="text-slate-400 hover:text-white transition p-1 ml-2" title="Share this review">
+                                    <button onclick="shareShoe()" class="text-slate-400 hover:text-white transition p-1 ml-2 flex-shrink-0" title="Share this review">
                                         <i data-lucide="share-2" class="w-5 h-5"></i>
                                     </button>
                                 </div>
@@ -202,8 +220,8 @@
                                 </div>
                             </div>
                             
-                            <!-- Image moved to right side -->
-                            <div id="modalIconContainer" class="flex-shrink-0 h-24 w-24 rounded-lg bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-700">
+                            <!-- Image moved to right side on desktop, top on mobile -->
+                            <div id="modalIconContainer" class="flex-shrink-0 h-24 w-24 rounded-lg bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-700 mx-auto sm:mx-0">
                                 <!-- Icon/Image injected here -->
                             </div>
                         </div>
@@ -232,10 +250,10 @@
                 
                 <!-- Footer with Affiliate Message -->
                 <div class="bg-slate-800 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse sm:items-center border-t border-slate-700">
-                    <button type="button" class="w-full inline-flex justify-center rounded-md border border-slate-600 shadow-sm px-4 py-2 bg-slate-700 text-base font-medium text-slate-200 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal()">
+                    <button type="button" class="w-full inline-flex justify-center rounded-md border border-slate-600 shadow-sm px-4 py-2 bg-slate-700 text-base font-medium text-slate-200 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:ml-3 sm:w-auto sm:text-sm mb-2 sm:mb-0" onclick="closeModal()">
                         Close
                     </button>
-                    <a href="#" id="modalBuyLink" target="_blank" class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-600 shadow-sm px-4 py-2 bg-slate-200 text-base font-medium text-slate-900 hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    <a href="#" id="modalBuyLink" target="_blank" class="w-full inline-flex justify-center rounded-md border border-slate-600 shadow-sm px-4 py-2 bg-slate-200 text-base font-medium text-slate-900 hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:ml-3 sm:w-auto sm:text-sm">
                         Buy Now
                     </a>
                     
@@ -276,6 +294,8 @@
         const loadingState = document.getElementById('loadingState');
         const errorState = document.getElementById('errorState');
         const toast = document.getElementById('toast');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
 
         // --- 4. Data Processing (JSONP style) ---
 
@@ -419,8 +439,10 @@
                 `;
             }
 
+            // Updated width for mobile grid: w-full or w-36 based on breakpoint
+            // On mobile, card is flexible width to fill grid column. On desktop fixed width.
             return `
-                <div class="card-shadow bg-slate-800 rounded-lg p-3 w-36 flex-shrink-0 cursor-pointer border border-slate-700 hover:border-emerald-500 relative group animate-fade-in"
+                <div class="card-shadow bg-slate-800 rounded-lg p-3 w-full sm:w-36 flex-shrink-0 cursor-pointer border border-slate-700 hover:border-emerald-500 relative group animate-fade-in flex flex-col items-center"
                      onclick="openModal(${shoe.id})">
                     <div class="absolute top-2 right-2 text-slate-500 group-hover:text-emerald-500">
                         <i data-lucide="info" class="w-4 h-4"></i>
@@ -428,7 +450,7 @@
                     <div class="flex justify-center mb-2 mt-2">
                         ${visualContent}
                     </div>
-                    <div class="text-center">
+                    <div class="text-center w-full">
                         <h4 class="font-bold text-sm text-slate-100 leading-tight line-clamp-2 h-9">${shoe.name}</h4>
                         <p class="text-xs text-slate-400 mt-1 truncate">${shoe.brand}</p>
                     </div>
@@ -449,22 +471,27 @@
                 totalVisible += tierShoes.length;
 
                 const tierRow = document.createElement('div');
+                // Desktop: Flex row. Mobile: Flex col.
                 tierRow.className = "flex flex-col md:flex-row shadow-sm rounded-lg overflow-hidden border border-slate-700 bg-slate-800";
                 
                 const labelDiv = document.createElement('div');
-                labelDiv.className = `${tier.class} md:w-32 p-4 flex flex-col items-center justify-center text-center flex-shrink-0 min-h-[120px]`;
+                // Label styles: Desktop left side. Mobile full width top banner.
+                labelDiv.className = `${tier.class} md:w-32 p-2 md:p-4 flex flex-row md:flex-col items-center justify-between md:justify-center text-center flex-shrink-0 min-h-[50px] md:min-h-[120px]`;
+                
                 labelDiv.innerHTML = `
-                    <span class="text-4xl font-black opacity-80">${tier.label}</span>
-                    <span class="text-xs font-semibold mt-1 uppercase opacity-75 hidden md:block">${tier.desc.split('-')[0]}</span>
+                    <span class="text-2xl md:text-4xl font-black opacity-80 pl-2 md:pl-0">${tier.label}</span>
+                    <span class="text-xs font-semibold uppercase opacity-75 pr-2 md:pr-0 md:mt-1">${tier.desc.split('-')[0]}</span>
                 `;
 
                 const shoesDiv = document.createElement('div');
-                shoesDiv.className = "flex-grow p-4 bg-slate-900 flex flex-row flex-wrap gap-4 items-center content-center tier-row overflow-x-auto";
+                // Desktop: Horizontal row with overflow. Mobile: Grid.
+                // grid-cols-2 for mobile (2 per row), sm:flex for desktop behavior
+                shoesDiv.className = "flex-grow p-4 bg-slate-900 grid grid-cols-2 gap-4 sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:content-center sm:overflow-x-auto";
                 
                 if (tierShoes.length > 0) {
                     shoesDiv.innerHTML = tierShoes.map(renderShoeCard).join('');
                 } else {
-                    shoesDiv.innerHTML = `<span class="text-slate-600 text-sm italic p-2">No shoes in this tier...</span>`;
+                    shoesDiv.innerHTML = `<span class="text-slate-600 text-sm italic p-2 col-span-2 sm:col-span-1">No shoes in this tier...</span>`;
                 }
 
                 tierRow.appendChild(labelDiv);
@@ -587,11 +614,19 @@
         window.closeAboutModal = function() {
             document.getElementById('aboutModal').classList.add('hidden');
         }
+        
+        // Mobile Menu Functions
+        window.toggleMobileMenu = function() {
+            mobileMenu.classList.toggle('hidden');
+        }
+        
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
 
         document.addEventListener('keydown', function(event) {
             if (event.key === "Escape") {
                 closeModal();
                 closeAboutModal();
+                mobileMenu.classList.add('hidden');
             }
         });
         searchInput.addEventListener('input', handleSearch);
